@@ -1,16 +1,18 @@
 ------Task 1------
-
+drop table grade;
+drop table course;
+drop table student;
 
 --------1----
 
-create table student (student_no number(4),student_name  varchar2(20) not null,student_address varchar2(50),CONSTRAINT student_student_no_pk PRIMARY KEY (student_no));
+create table student (student_no varchar2(6),student_name  varchar2(20) not null,student_address varchar2(50),CONSTRAINT student_student_no_pk PRIMARY KEY (student_no));
 
 -------------2--
-create table course (course_no number(2),course_name  varchar2(20) not null,course_details varchar2(50),CONSTRAINT course_course_no_pk PRIMARY KEY (course_no));
+create table course (course_no varchar2(4),course_name  varchar2(20) not null,course_details varchar2(50),CONSTRAINT course_course_no_pk PRIMARY KEY (course_no));
 
 
 -----------3-----
-create table grade (student_no number(4),course_no number(2),grade  number(3) not null,constraint grade_pk PRIMARY KEY (student_no,course_no),
+create table grade (student_no varchar2(6),course_no varchar2(4),grade  number(3) not null,constraint grade_pk PRIMARY KEY (student_no,course_no),
 constraint grade_student_no_fk Foreign Key(student_no) References student(student_no),constraint grade_course_no_fk Foreign Key(course_no) References course(course_no));
 
 
