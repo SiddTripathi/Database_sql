@@ -47,22 +47,22 @@ constraint store_id_fk FOREIGN key (store_id)references store(store_id)
 
 );
 
-insert into product(product_id,product_name,price)
-select md.product_id,md.product_name,md.price from  masterdata md;
-
-insert into supplier (supplier_id,supplier_name)
-select unique(md.supplier_id),md.supplier_name from masterdata md;
-
-insert into customer (customer_id,customer_name)
-select unique(t.customer_id),t.customer_name from transactions t, masterdata md;
-
-insert into store (store_id,store_name)
-select unique(t.store_id),t.store_name from masterdata md,transactions t;
-
-
-
-insert into transaction_fact
-select t.transactions_id,t.t_date, t.quantity,t.product_id,t.customer_id,md.supplier_id,t.store_id,t.quantity*md.price
-from transactions t, masterdata md
-where t.product_id = md.product_id;
+--insert into product(product_id,product_name,price)
+--select md.product_id,md.product_name,md.price from  masterdata md;
+--
+--insert into supplier (supplier_id,supplier_name)
+--select unique(md.supplier_id),md.supplier_name from masterdata md;
+--
+--insert into customer (customer_id,customer_name)
+--select unique(t.customer_id),t.customer_name from transactions t, masterdata md;
+--
+--insert into store (store_id,store_name)
+--select unique(t.store_id),t.store_name from masterdata md,transactions t;
+--
+--
+--
+--insert into transaction_fact
+--select t.transactions_id,t.t_date, t.quantity,t.product_id,t.customer_id,md.supplier_id,t.store_id,t.quantity*md.price
+--from transactions t, masterdata md
+--where t.product_id = md.product_id;
 commit;

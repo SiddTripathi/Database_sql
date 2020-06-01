@@ -43,4 +43,15 @@ group by s.store_id,p.product_id
 order by s.store_id,p.product_id;
 
 
+--------Task5------
+select s.store_id, p.product_id,sum(tf.total_sale)
+from product p, store s, transaction_fact tf
+where tf.store_id = s.store_id and tf.product_id =p.product_id
+group by CUBE(s.store_id,p.product_id)
+order by s.store_id,p.product_id;
 
+select s.store_id, p.product_id,sum(tf.total_sale)
+from product p, store s, transaction_fact tf
+where tf.store_id = s.store_id and tf.product_id =p.product_id
+group by ROLLUP(s.store_id,p.product_id)
+order by s.store_id,p.product_id;
