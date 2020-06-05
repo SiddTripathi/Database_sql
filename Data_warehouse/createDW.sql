@@ -3,7 +3,7 @@ drop table product;
 drop table supplier;
 drop table customer;
 drop table store;
-
+drop table date_table;
 
 create table product(
 product_id varchar2(6),
@@ -30,9 +30,21 @@ store_name varchar2(20) not null,
 constraint store_id_pk primary key (store_id)
 );
 
+Create table date_table(
+date_id NUMBER,
+day NUMBER,
+MONTH varchar(10),
+month_num number,
+t_date date,
+year number(4),
+quart number,
+constraint date_id_pk primary key (date_id));
+
+
 create table transaction_fact(
 transaction_id number(8,0),
-t_date date not null,
+date_id NUMBER,
+--t_date date not null,
 quantity number(3,0) not null,
 product_id varchar2(6) not null,
 customer_id varchar2(4) not null,
@@ -43,9 +55,14 @@ constraint transaction_id_pk primary key (transaction_id),
 constraint product_id_fk FOREIGN key (product_id)references product(product_id),
 constraint customer_id_fk FOREIGN key (customer_id)references customer(customer_id),
 constraint supplier_id_fk FOREIGN key (supplier_id)references supplier(supplier_id),
-constraint store_id_fk FOREIGN key (store_id)references store(store_id)
+constraint store_id_fk FOREIGN key (store_id)references store(store_id),
+constraint date_id_fk FOREIGN key (date_id)references date_table(date_id)
 
 );
+
+
+
+
 
 --insert into product(product_id,product_name,price)
 --select md.product_id,md.product_name,md.price from  masterdata md;

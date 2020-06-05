@@ -1,5 +1,5 @@
 --------------------------------------------------------
---  File created - Monday-June-01-2020   
+--  File created - Friday-June-05-2020   
 --------------------------------------------------------
 --------------------------------------------------------
 --  DDL for Procedure INLJ
@@ -8,72 +8,92 @@ set define off;
 
   CREATE OR REPLACE PROCEDURE "HTR0018"."INLJ" AS
 
-tr_id transactions.transactions_id%type;
-pr_id transactions.product_id%type;
-cu_id transactions.customer_id%type;
-cu_name transactions.customer_name%type;
-st_id transactions.store_id%type;
-st_name transactions.store_name%type;
-tt_date transactions.t_date%type;
-tr_quant transactions.quantity%type;
-md_pr_id masterdata.product_id%type;
-pr_name masterdata.product_name%type;
-sup_id masterdata.supplier_id%type;
-sup_name masterdata.supplier_name%type;
-md_price masterdata.price%type;
-counter number;
-id_check number;
-cursor transactions_fetch is 
-select * from transactions;
 
+trans_id TRANSACTIONS.TRANSACTIONS_ID%type;
+prod_id TRANSACTIONS.PRODUCT_ID%type;
+cust_id TRANSACTIONS.CUSTOMER_ID%type;
+cust_name TRANSACTIONS.CUSTOMER_NAME%type;
+st_id TRANSACTIONS.STORE_ID%type;
+st_name TRANSACTIONS.STORE_NAME%type;
+trans_date TRANSACTIONS.T_DATE%type;
+trans_quant TRANSACTIONS.QUANTITY%type;
+
+
+type trans_type IS varray(50) of TRANSACTIONS%ROWTYPE;
+transact trans_type;
+
+
+md_prod_id MASTERDATA.PRODUCT_ID%type;
+prod_name MASTERDATA.PRODUCT_NAME%type;
+supp_id MASTERDATA.SUPPLIER_ID%type;
+supp_name MASTERDATA.SUPPLIER_NAME%type;
+md_price MASTERDATA.PRICE%type;
+t_date_id date_table.date_id%type;
+id_check NUMBER;
+countr NUMBER;
+loop_numb NUMBER;
+
+
+
+CURSOR trans_fetch is 
+SELECT * FROM transactions;
 BEGIN
-  counter:=0;
-  Open transactions_fetch;
-  loop
-  counter:=0;
-  loop
-  fetch transactions_fetch INTO tr_id,pr_id,cu_id,cu_name,st_id,st_name,tt_date,tr_quant;
-  
-  select product_id,product_name,supplier_id,supplier_name,price
-  into md_pr_id,pr_name,sup_id,sup_name,md_price
-  from masterdata 
-  where product_id=pr_id;
-  
-  counter:=counter+1;
-  --dbms_output.put_line(pr_name||counter);
-  
-  select count(*) into id_check from product where product_id=pr_id;
-  if(id_check=0) THEN
-  insert into product values (pr_id,pr_name,md_price);
-  END IF;
-  
-  select count(*) into id_check from customer where customer_id=cu_id;
-  if(id_check=0) THEN
-  insert into customer values (cu_id,cu_name);
-  END IF;
-  
-  select count(*) into id_check from supplier where supplier_id=sup_id;
-  if(id_check=0) THEN
-  insert into supplier values (sup_id,sup_name);
-  END IF;
-  
-  select count(*) into id_check from store where store_id=st_id;
-  if(id_check=0) THEN
-  insert into store values (st_id,st_name);
-  END IF;
-  
-  select count(*) into id_check from transaction_fact where transaction_id=tr_id;
-  if(id_check=0) THEN
-  insert into transaction_fact values (tr_id,tt_date,tr_quant,pr_id,cu_id,sup_id,st_id,tr_quant*md_price);
-  END IF;
-  
-  exit when counter=50 or transactions_fetch%notfound;
-  end loop;
-  Exit when transactions_fetch%notfound;
-  end loop;
- -- dbms_output.put_line(pr_name);
-  --dbms_output.put_line(dbms_utility.format_call_stack());
-  commit;
+OPEN trans_fetch;
+
+CREATE_DATE_TABLE(
+    YEAR_NUM => 2019
+  );
+LOOP
+loop_numb:=loop_numb+1;
+FETCH trans_fetch BULK COLLECT INTO transact LIMIT 50;
+EXIT WHEN trans_fetch%notfound;
+FOR countr in 1..50
+
+LOOP 
+trans_id:=transact(countr).transactions_id;
+prod_id:=transact(countr).product_id;
+cust_id:=transact(countr).customer_id;
+cust_name:=transact(countr).customer_name;
+st_id:=transact(countr).store_id;
+st_name:=transact(countr).store_name;
+trans_date:=transact(countr).t_date;
+trans_quant:=transact(countr).quantity;
+SELECT product_id,product_name,supplier_id,supplier_name,price
+INTO md_prod_id,prod_name,supp_id,supp_name,md_price
+FROM MASTERDATA
+WHERE product_id=prod_id;
+--ADDING DATA IN DIMENSION TABLES
+SELECT date_id INTO t_date_id FROM date_table WHERE t_date=trans_date;
+
+SELECT COUNT(*) INTO id_check FROM product WHERE product_id=prod_id;
+IF(id_check=0) THEN 
+INSERT INTO product VALUES(prod_id,prod_name,md_price);
+END IF;
+SELECT COUNT(*) INTO id_check FROM customer WHERE customer_id=cust_id;
+IF(id_check=0) THEN 
+INSERT INTO customer VALUES(cust_id,cust_name);
+END IF;
+SELECT COUNT(*) INTO id_check FROM supplier WHERE supplier_id=supp_id;
+IF(id_check=0) THEN 
+INSERT INTO supplier VALUES(supp_id,supp_name);
+END IF;
+SELECT count(*) INTO id_check FROM store WHERE store_id=st_id;
+IF(id_check=0) THEN 
+INSERT INTO store VALUES(st_id,st_name);
+END IF;
+SELECT count(*) INTO id_check FROM transaction_fact WHERE transaction_id=trans_id;
+IF(id_check=0) THEN 
+INSERT INTO transaction_fact VALUES(trans_id,t_date_id,trans_quant,prod_id,cust_id,supp_id,st_id,trans_quant*md_price);
+END IF;
+END LOOP;
+
+END LOOP;
+
+COMMIT;
+Exception
+WHEN OTHERS THEN
+dbms_output.put_line(countr||loop_numb);
+dbms_output.put_line(dbms_utility.format_call_stack());
 END INLJ;
 
 /
