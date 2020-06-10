@@ -4,7 +4,12 @@ drop table supplier;
 drop table customer;
 drop table store;
 drop table date_table;
+drop materialized view storeanalysis;
 
+
+
+--SQL statement for creating Dimension table Product
+--PK-->product_id
 create table product(
 product_id varchar2(6),
 product_name varchar2(30) not null,
@@ -12,24 +17,32 @@ price number(5,2) default 0.0,
 constraint product_id_pk Primary key (product_id));
 
 
+--SQL statement for creating Dimension table Supplier
+--PK-->supplier_id
 create table supplier(
 supplier_id varchar2(5),
 supplier_name varchar2(30) not null,
 constraint supplier_id_pk primary key (supplier_id)
 );
 
+--SQL statement for creating Dimension table Customer
+--PK-->customer_id
 create table customer(
 customer_id varchar2(4),
 customer_name varchar2(30) not null,
 constraint customer_id_pk primary key (customer_id)
 );
 
+--SQL statement for creating Dimension table Store
+--PK-->store_id
 create table store(
 store_id varchar2(4),
 store_name varchar2(20) not null,
 constraint store_id_pk primary key (store_id)
 );
 
+--SQL statement for creating Dimension table date_table
+--PK-->date_id
 Create table date_table(
 date_id NUMBER,
 day NUMBER,
@@ -41,6 +54,8 @@ quart number,
 constraint date_id_pk primary key (date_id));
 
 
+--SQL statement for creating fact table Transaction_Fact
+--PK-->transaction_id
 create table transaction_fact(
 transaction_id number(8,0),
 date_id NUMBER,
@@ -57,29 +72,6 @@ constraint customer_id_fk FOREIGN key (customer_id)references customer(customer_
 constraint supplier_id_fk FOREIGN key (supplier_id)references supplier(supplier_id),
 constraint store_id_fk FOREIGN key (store_id)references store(store_id),
 constraint date_id_fk FOREIGN key (date_id)references date_table(date_id)
-
 );
 
-
-
-
-
---insert into product(product_id,product_name,price)
---select md.product_id,md.product_name,md.price from  masterdata md;
---
---insert into supplier (supplier_id,supplier_name)
---select unique(md.supplier_id),md.supplier_name from masterdata md;
---
---insert into customer (customer_id,customer_name)
---select unique(t.customer_id),t.customer_name from transactions t, masterdata md;
---
---insert into store (store_id,store_name)
---select unique(t.store_id),t.store_name from masterdata md,transactions t;
---
---
---
---insert into transaction_fact
---select t.transactions_id,t.t_date, t.quantity,t.product_id,t.customer_id,md.supplier_id,t.store_id,t.quantity*md.price
---from transactions t, masterdata md
---where t.product_id = md.product_id;
 commit;
