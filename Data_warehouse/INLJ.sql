@@ -1,13 +1,15 @@
 --------------------------------------------------------
---  File created - Friday-June-05-2020   
+--  File created - Wednesday-June-10-2020   
 --------------------------------------------------------
 --------------------------------------------------------
 --  DDL for Procedure INLJ
 --------------------------------------------------------
 set define off;
 
-  CREATE OR REPLACE PROCEDURE "HTR0018"."INLJ" AS
+CREATE OR REPLACE PROCEDURE "HTR0018"."INLJ" AS
 
+--declaring variables using %TYPE so that the data types of 
+--variables is similar to corresponding columns.
 
 trans_id TRANSACTIONS.TRANSACTIONS_ID%type;
 prod_id TRANSACTIONS.PRODUCT_ID%type;
@@ -17,30 +19,31 @@ st_id TRANSACTIONS.STORE_ID%type;
 st_name TRANSACTIONS.STORE_NAME%type;
 trans_date TRANSACTIONS.T_DATE%type;
 trans_quant TRANSACTIONS.QUANTITY%type;
-
-
-type trans_type IS varray(50) of TRANSACTIONS%ROWTYPE;
-transact trans_type;
-
-
 md_prod_id MASTERDATA.PRODUCT_ID%type;
 prod_name MASTERDATA.PRODUCT_NAME%type;
 supp_id MASTERDATA.SUPPLIER_ID%type;
 supp_name MASTERDATA.SUPPLIER_NAME%type;
 md_price MASTERDATA.PRICE%type;
 t_date_id date_table.date_id%type;
+
+
+--Variables for cursor and loops for fetching 50 records at time
+type trans_type IS varray(50) of TRANSACTIONS%ROWTYPE;
+transact trans_type;
 id_check NUMBER;
 countr NUMBER;
 loop_numb NUMBER;
 
 
-
+--Step 2
+--Creating cursor to fetch 50 records at time from
+-- transations table and enriching with master data
 CURSOR trans_fetch is 
 SELECT * FROM transactions;
 BEGIN
 OPEN trans_fetch;
 
-CREATE_DATE_TABLE(
+CREATE_DATE(
     YEAR_NUM => 2019
   );
 LOOP
@@ -48,7 +51,9 @@ loop_numb:=loop_numb+1;
 FETCH trans_fetch BULK COLLECT INTO transact LIMIT 50;
 EXIT WHEN trans_fetch%notfound;
 FOR countr in 1..50
-
+--step 3
+-- reading cursor tuple by tuple
+-- product_id as index (Where condition)
 LOOP 
 trans_id:=transact(countr).transactions_id;
 prod_id:=transact(countr).product_id;
@@ -62,7 +67,7 @@ SELECT product_id,product_name,supplier_id,supplier_name,price
 INTO md_prod_id,prod_name,supp_id,supp_name,md_price
 FROM MASTERDATA
 WHERE product_id=prod_id;
---ADDING DATA IN DIMENSION TABLES
+
 SELECT date_id INTO t_date_id FROM date_table WHERE t_date=trans_date;
 
 SELECT COUNT(*) INTO id_check FROM product WHERE product_id=prod_id;

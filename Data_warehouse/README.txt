@@ -3,7 +3,7 @@
 1. CONTENT - THE ZIP FOLDER CONTAINS FOLLOWING sql scripts.
  a)createDW.sql 
  b)INLJ.sql
- c)CREATE_DATE_TABLE.sql
+ c)CREATE_DATE.sql
  d)dwQueries.sql
  e)README.txt
 
@@ -12,9 +12,9 @@
 2. STEPS TO RUN QUERIES
 
  Step 1: Run createDW.sql for creating the star-schema DW. This query should create one center fact table - Transaction_fact and
-         5 Dimension table - PRODUCT, STORE, CUSTOMER, SUPPLIER and Date_table
+         5 Dimension table - PRODUCT, STORE, CUSTOMER, SUPPLIER and DATE_TABLE
 
- Step 2: Run CREATE_DATE_TABLE.sql. This will create a procedure CREATE_DATE_TABLE which is responsible for inserting data in 
+ Step 2: Run CREATE_DATE.sql. This will create a procedure CREATE_DATE which is responsible for inserting data in 
          Date_table. Dont run this procedure seperately as it is called in INLJ procedure and runs automatically when INLJ procedure 
          is run.
 
