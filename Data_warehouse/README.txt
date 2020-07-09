@@ -1,17 +1,19 @@
 ------README FILE FOR INSTRUCTIONS TO RUN SQL QUERIES FOR ASSIGNMENT 2- NATURE FRESH DW------------
 
 1. CONTENT - THE ZIP FOLDER CONTAINS FOLLOWING sql scripts.
- a)createDW.sql 
- b)INLJ.sql
- c)CREATE_DATE.sql
- d)dwQueries.sql
- e)README.txt
+ a)Transaction_and_Masterdata_Generator.sql
+ b)createDW.sql 
+ c)INLJ.sql
+ d)CREATE_DATE.sql
+ e)dwQueries.sql
+ f)Data_warehouse_report
+ g)README.txt
 
 
 
 2. STEPS TO RUN QUERIES
 
- Step 1: Run createDW.sql for creating the star-schema DW. This query should create one center fact table - Transaction_fact and
+ Step 1: First of all, run Transaction_and_Masterdata_Generator.sql. Run createDW.sql for creating the star-schema DW. This query should create one center fact table - Transaction_fact and
          5 Dimension table - PRODUCT, STORE, CUSTOMER, SUPPLIER and DATE_TABLE
 
  Step 2: Run CREATE_DATE.sql. This will create a procedure CREATE_DATE which is responsible for inserting data in 
@@ -25,8 +27,8 @@
          understanding, comments have also been provided at the starting of each query.  
 
 
-NOTE-1 -> The above steps are written assuming that data source table - TRANSACTIONS, and master data table - MASTERDATA have already been  
-        created. In case they are not created, please run Transaction_and_masterData_Generator.sql script
 
-NOTE-2 -> Sometimes, it might be possible that you encounter a disabled run button while running procedure. In such instance, compile the
+NOTE-1 -> Sometimes, it might be possible that you encounter a disabled run button while running procedure. In such instance, compile the
           procedure (ctrl+F8) first and the button will get enabled. 
+
+NOTE-2 -> Detailed report of this task is provided in pdf file named Data_warehouse_report.
